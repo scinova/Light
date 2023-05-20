@@ -36,42 +36,48 @@ struct RGB hsv2rgb(double h, double s, double v) {
 }
 
 #if defined(ARDUINO_ARCH_ESP32)
-int _num_channels=0;
-#endif
-
+Light::Light(int pin, int channel) {
+	_is_color_capable = false;
+	_pin = pin;
+	_channel = channel;
+	ledcSetup(_channel, 5000, 12);
+	ledcAttachPin(_pin, _channel);
+}
+#else
 Light::Light(int pin) {
 	_is_color_capable = false;
 	_pin = pin;
-#if defined(ARDUINO_ARCH_ESP32)
-	_channel = _num_channels++;
-	ledcSetup(_channel, 5000, 12);
-	ledcAttachPin(pin, _channel);
-#else
 	pinMode(pin, OUTPUT);
-#endif
 }
+#endif
 
+#if defined(ARDUINO_ARCH_ESP32)
+Light::Light(int red_pin, int green_pin, int blue_pin, int red_channel, int green_channel, int blue_channel) {
+	_is_color_capable = true;
+	_red_pin = red_pin;
+	_green_pin = green_pin;
+	_blue_pin = blue_pin;
+	_red_channel = red_channel;
+	_green_channel = green_channel;
+	_blue_channel = blue_channel;
+	ledcSetup(_red_channel, 5000, 12);
+	ledcAttachPin(red_pin, _red_channel);
+	ledcSetup(_green_channel, 5000, 12);
+	ledcAttachPin(green_pin, _green_channel);
+	ledcSetup(_blue_channel, 5000, 12);
+	ledcAttachPin(blue_pin, _blue_channel);
+}
+#else
 Light::Light(int red_pin, int green_pin, int blue_pin) {
 	_is_color_capable = true;
 	_red_pin = red_pin;
 	_green_pin = green_pin;
 	_blue_pin = blue_pin;
-#if defined(ARDUINO_ARCH_ESP32)
-	_red_channel = _num_channels++;
-	ledcSetup(_red_channel, 5000, 12);
-	ledcAttachPin(red_pin, _red_channel);
-	_green_channel = _num_channels++;
-	ledcSetup(_green_channel, 5000, 12);
-	ledcAttachPin(green_pin, _green_channel);
-	_blue_channel = _num_channels++;
-	ledcSetup(_blue_channel, 5000, 12);
-	ledcAttachPin(blue_pin, _blue_channel);
-#else
 	pinMode(red_pin, OUTPUT);
 	pinMode(green_pin, OUTPUT);
 	pinMode(blue_pin, OUTPUT);
-#endif
 }
+#endif
 
 void Light::log() {
 	char buf[100];

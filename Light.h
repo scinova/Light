@@ -11,8 +11,13 @@ struct RGB hsv2rgb(double h, double s, double v);
 
 class Light {
 	public:
+#if defined(ARDUINO_ARCH_ESP32)
+		Light(int pin, int channel);
+		Light(int red_pin, int green_pin, int blue_pin, int red_channel, int blue_channel, int green_channel);
+#else
 		Light(int pin);
 		Light(int red_pin, int green_pin, int blue_pin);
+#endif
 		void enable();
 		void disable();
 		void toggle();

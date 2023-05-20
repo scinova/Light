@@ -15,7 +15,7 @@
 #define GREEN_PIN 18 //5
 #define BLUE_PIN 5 //6
 
-Light rgblight = Light(RED_PIN, GREEN_PIN, BLUE_PIN);
+Light rgblight = Light(RED_PIN, GREEN_PIN, BLUE_PIN, 1, 2, 3);
 //Light light = Light(WHITE_PIN);
 long _commandTime;
 
